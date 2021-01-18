@@ -1,5 +1,6 @@
 
 # import numpy as np
+from copy import deepcopy
 
 
 # MY INPUT:
@@ -24,6 +25,8 @@ moonspos = [[-1,0,2], [2,-10,-7], [4,-8,8], [3,5,-1]]
 # moonspos = [[-8,-10,0], [5,5,10], [2,-7,3], [9,-8,-3]]
 
 moonsvel = [[0,0,0] for _ in range(len(moonspos))]
+initialpos = deepcopy(moonspos)
+initialvel = deepcopy(moonsvel)
 # s1 = {}
 # s1[' '.join(map(str, moonspos[0]))] = set()
 # s1[' '.join(map(str, moonspos[0]))].add(tuple(moonsvel[0]))
@@ -39,15 +42,22 @@ moonsvel = [[0,0,0] for _ in range(len(moonspos))]
 # states = [s1, s2, s3, s4]
 
 state = ''
+p = ''
 checksum = 0
 for i in range(len(moonspos)):
     state += ' '.join(map(str, moonspos[i]))
     state += ' ' + ' '.join(map(str, moonsvel[i])) + ' '
+    p += ' '.join(map(str, moonspos[i])) + ' '
     checksum += sum(moonspos[i]) * sum(moonsvel[i])
 
 seen = {}
+pos = set()
+pos.add(p)
+ptime = {}
+ptime[p] = [0]
 seen[checksum] = set()
 seen[checksum].add(state)
+last10 = ['' for _ in range(10)]
 timesteps = 0
 while True:
     timesteps += 1
@@ -62,11 +72,19 @@ while True:
                     moonsvel[m1][c] += 1
                     moonsvel[m2][c] -= 1
 
-    # matches = 0
+    p = ''
     for m in range(len(moonspos)):
         moonspos[m][0] += moonsvel[m][0]
         moonspos[m][1] += moonsvel[m][1]
         moonspos[m][2] += moonsvel[m][2]
+        p += ' '.join(map(str, moonspos[i])) + ' '
+    if p not in pos: pos.add(p)
+    else: 
+        if p in ptime.keys(): ptime[p].append(timesteps);break
+        else: ptime[p] = [timesteps]
+    # if moonspos == initialpos:
+    #     print(timesteps)
+
         # key = ' '.join(map(str, moonspos[m]))
         # vel = tuple(moonsvel[m])
         # if key not in states[m].keys():
@@ -76,26 +94,21 @@ while True:
         #     states[m][key].add(vel)
         # else:
         #     matches += 1
-    # if matches == len(moonspos):
-    state = ''
-    checksum = 0
-    for i in range(len(moonspos)):
-        state += ' '.join(map(str, moonspos[i]))
-        state += ' ' + ' '.join(map(str, moonsvel[i])) + ' '
-        checksum += sum(moonspos[i]) * sum(moonsvel[i])
-    if checksum not in seen.keys():
-        seen[checksum] = set()
-        seen[checksum].add(state)
-    elif state not in seen[checksum]:
-        seen[checksum].add(state)
-    else:
-        print(timesteps)
-        break
-    # if timesteps == 1000: break
+        
+    # state = ''
+    # checksum = 0
+    # for i in range(len(moonspos)):
+    #     state += ' '.join(map(str, moonspos[i]))
+    #     state += ' ' + ' '.join(map(str, moonsvel[i])) + ' '
+    #     checksum += sum(moonspos[i]) * sum(moonsvel[i])
+    # if checksum not in seen.keys():
+    #     seen[checksum] = set()
+    #     seen[checksum].add(state)
+    # elif state not in seen[checksum]:
+    #     seen[checksum].add(state)
+    # else:
+    #     print(timesteps)
+    #     break
+    # last10.append(state)
+    # last10.pop(0)
 
-# energy = 0
-# for moon in range(len(moonspos)):
-#     pot=abs(moonspos[moon][0])+abs(moonspos[moon][1])+abs(moonspos[moon][2])
-#     kin=abs(moonsvel[moon][0])+abs(moonsvel[moon][1])+abs(moonsvel[moon][2])
-#     energy += pot * kin
-# print(energy)

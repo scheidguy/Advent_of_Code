@@ -1,5 +1,5 @@
 
-from copy import deepcopy
+# from copy import deepcopy
 
 
 # MY INPUT:
@@ -14,7 +14,7 @@ moonspos = [[-15,1,4], [1,-10,-8], [-5,4,9], [4,6,-2]]
 # <x=2, y=-10, z=-7>
 # <x=4, y=-8, z=8>
 # <x=3, y=5, z=-1>
-# moonspos = [[-1,0,2], [2,-10,-7], [4,-8,8], [3,5,-1]]
+moonspos = [[-1,0,2], [2,-10,-7], [4,-8,8], [3,5,-1]]
 
 # DEBUG2:
 # <x=-8, y=-10, z=0>
@@ -40,15 +40,16 @@ moonsvel = [[0,0,0] for _ in range(len(moonspos))]
 
 state = ''
 for i in range(len(moonspos)):
-    state += ' '.join(map(str, moonspos[i]))
-    state += ' '.join(map(str, moonsvel[i]))
+    state += ' '.join(map(str, moonspos[i])) + ' '
+    state += ' '.join(map(str, moonsvel[i])) + ' '
 
+# homevel = []
 SEEN = set()
 SEEN.add(state)
 timesteps = 0
 while True:
     timesteps += 1
-    if timesteps % 10**6 == 0: print(timesteps)
+    if timesteps % 10**6 == 0: print(f'PROCESSING: {timesteps}')
     for m1 in range(len(moonspos)):
         for m2 in range(m1 + 1, len(moonspos)):
             for c in range(len(moonspos[0])):
@@ -59,30 +60,52 @@ while True:
                     moonsvel[m1][c] += 1
                     moonsvel[m2][c] -= 1
 
-    # matches = 0
     for m in range(len(moonspos)):
         moonspos[m][0] += moonsvel[m][0]
         moonspos[m][1] += moonsvel[m][1]
         moonspos[m][2] += moonsvel[m][2]
-        # key = ' '.join(map(str, moonspos[m]))
-        # vel = tuple(moonsvel[m])
-        # if key not in states[m].keys():
-        #     states[m][key] = set()
-        #     states[m][key].add(vel)
-        # elif vel not in states[m][key]:
-        #     states[m][key].add(vel)
-        # else:
-        #     matches += 1
-    # if matches == len(moonspos):
+
+    # state = ''
+    # for i in range(len(moonsvel)): state += ' '.join(map(str, moonsvel[i]))+' '
+    # if state not in SEEN: SEEN.add(state)
+    # else:
+    #     print(timesteps)
+    #     homevel.append(state)
+    
+    # if not any([any(v) for v in moonsvel]):
+    #     homevel.append(timesteps)
+    #     state = ''
+    #     for i in range(len(moonspos)): state += ' '.join(map(str, moonspos[i]))
+    #     if state not in SEEN: SEEN.add(state)
+    #     else: print(timesteps);break
+        
+    # # matches = 0
+    # for m in range(len(moonspos)):
+    #     moonspos[m][0] += moonsvel[m][0]
+    #     moonspos[m][1] += moonsvel[m][1]
+    #     moonspos[m][2] += moonsvel[m][2]
+        
+    #     # key = ' '.join(map(str, moonspos[m]))
+    #     # vel = tuple(moonsvel[m])
+    #     # if key not in states[m].keys():
+    #     #     states[m][key] = set()
+    #     #     states[m][key].add(vel)
+    #     # elif vel not in states[m][key]:
+    #     #     states[m][key].add(vel)
+    #     # else:
+    #     #     matches += 1
+    # # if matches == len(moonspos):
+        
     state = ''
     for i in range(len(moonspos)):
-        state += ' '.join(map(str, moonspos[i]))
-        state += ' '.join(map(str, moonsvel[i]))
+        state += ' '.join(map(str, moonspos[i])) + ' '
+        state += ' '.join(map(str, moonsvel[i])) + ' '
     if state not in SEEN:
         SEEN.add(state)
     else:
         print(timesteps)
         break
+    
     # if timesteps == 1000: break
 
 # energy = 0
