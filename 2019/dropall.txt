@@ -1,0 +1,8 @@
+drop dark matter
+drop dehydrated water
+drop bowl of rice
+drop antenna
+drop hypercube
+drop manifold
+drop candy cane
+drop jam
