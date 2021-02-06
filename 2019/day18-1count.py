@@ -59,15 +59,14 @@ def get_accessible(grid, gridmap, keys, doors):
     
 
 def walkpath(access, keys, doors, prevkey, key2key, dependencies, found):
-    shortest = 10**9
-    # if set(access) == set('bfagcedh'):
-    #     access = 'a'
-    # if set(access) == set('gbfdhce'):
-    #     access = 'f'
-    # if set(access) == set('bcegdh'):
-    #     access = 'b'
-    # if set(access) == set('jcegdh'):
-    #     access = 'j'
+    if set(access) == set('bfagcedh'):
+        access = 'a'
+    if set(access) == set('gbfdhce'):
+        access = 'f'
+    if set(access) == set('bcegdh'):
+        access = 'b'
+    if set(access) == set('jcegdh'):
+        access = 'j'
     # if set(access) == set('cegdh'):
     #     access = 'g'
     # if set(access) == set('ndhce'):
@@ -78,8 +77,8 @@ def walkpath(access, keys, doors, prevkey, key2key, dependencies, found):
     #     access = 'd'
     # if set(access) == set('lceo'):
     #     access = 'l'
+    s = 0
     for key in access:
-        s = key2key[prevkey + key]
         newaccess = access.replace(key, '')
         newfound = found + key
         for k in dependencies.keys():
@@ -87,10 +86,9 @@ def walkpath(access, keys, doors, prevkey, key2key, dependencies, found):
                 if set(newfound).issuperset(set(dependencies[k])):
                     newaccess += k
         if len(newaccess) > 0:
+            s += len(newaccess) -1 
             s += walkpath(newaccess, keys, doors, key, key2key, dependencies, newfound)
-        if s < shortest:
-            shortest = s
-    return shortest
+    return s
 
 
 tic = time()
@@ -189,7 +187,7 @@ for door in doors.values():
 access, gridmap = get_accessible(grid, gridmap, keys, doors)
 
 found = ''
-steps = walkpath(access, keys, doors, '0', key2key, dependencies, found)
+steps = 1 + walkpath(access, keys, doors, '0', key2key, dependencies, found)
 
 print(steps)
 print(f'TIME ELAPSED: {round(time()-tic)} seconds')
