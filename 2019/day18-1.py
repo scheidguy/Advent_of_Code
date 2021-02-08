@@ -60,16 +60,16 @@ def get_accessible(grid, gridmap, keys, doors):
 
 def walkpath(access, keys, doors, prevkey, key2key, dependencies, found):
     shortest = 10**9
-    # if set(access) == set('bfagcedh'):
-    #     access = 'a'
-    # if set(access) == set('gbfdhce'):
-    #     access = 'f'
-    # if set(access) == set('bcegdh'):
-    #     access = 'b'
-    # if set(access) == set('jcegdh'):
-    #     access = 'j'
-    # if set(access) == set('cegdh'):
-    #     access = 'g'
+    if set(access) == set('bfagcedh'):
+        access = 'a'
+    if set(access) == set('gbfdhce'):
+        access = 'f'
+    if set(access) == set('bcegdh'):
+        access = 'b'
+    if set(access) == set('jcegdh'):
+        access = 'j'
+    if set(access) == set('cegdh'):
+        access = 'g'
     # if set(access) == set('ndhce'):
     #     access = 'n'
     # if set(access) == set('dhce'):
@@ -82,10 +82,12 @@ def walkpath(access, keys, doors, prevkey, key2key, dependencies, found):
         s = key2key[prevkey + key]
         newaccess = access.replace(key, '')
         newfound = found + key
+        newfoundset = set(newfound)
         for k in dependencies.keys():
-            if k not in newfound and k not in newaccess:
-                if set(newfound).issuperset(set(dependencies[k])):
-                    newaccess += k
+            if k not in newfound:
+                if k not in newaccess:
+                    if newfoundset.issuperset(dependencies[k]):
+                        newaccess += k
         if len(newaccess) > 0:
             s += walkpath(newaccess, keys, doors, key, key2key, dependencies, newfound)
         if s < shortest:
@@ -97,9 +99,9 @@ tic = time()
 # f = open('day18-1_debug1.txt')
 # f = open('day18-1_debug2.txt')
 # f = open('day18-1_debug3.txt')
-# f = open('day18-1_debug4.txt')
+f = open('day18-1_debug4.txt')
 # f = open('day18-1_debug5.txt')
-f = open('day18-1_input.txt')
+# f = open('day18-1_input.txt')
 text = f.readlines()
 f.close()
 
@@ -172,7 +174,7 @@ while len(inds[0]) > 0:
                     c -= 1
                 if (r, c) in whatkey.keys():
                     needed += whatkey[(r, c)].lower()
-            dependencies[key] = needed
+            dependencies[key] = set(needed)
         if maze[row + 1, col] == -1:
             maze[row + 1, col] = steps
         if maze[row - 1, col] == -1:
@@ -187,9 +189,7 @@ for door in doors.values():
     grid[door[0], door[1]] = 10**4
 
 access, gridmap = get_accessible(grid, gridmap, keys, doors)
-
-found = ''
-steps = walkpath(access, keys, doors, '0', key2key, dependencies, found)
+steps = walkpath(access, keys, doors, '0', key2key, dependencies, '')
 
 print(steps)
 print(f'TIME ELAPSED: {round(time()-tic)} seconds')
